@@ -26,4 +26,10 @@ jobs:
       - name: Run tests
         run: python -m pytest tests/test_unit
       # Add behave command
+      - name: Functional Tests
+        run: behave tests/test_functional/features
+      - name: Measure quality cov tests
+        run: python -m pytest --cov=formation_indus_ds_avancee/ tests/test_unit/ -vv -p no:warnings
+      - name: tests pyramid
+        run: ./tests/tests_pyramid.sh
 
