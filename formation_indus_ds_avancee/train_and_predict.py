@@ -1,5 +1,6 @@
 import os
 import time
+from datetime import datetime
 
 import joblib
 import mlflow
@@ -9,7 +10,6 @@ from sklearn.ensemble import RandomForestRegressor
 
 def train_model_with_io(features_path: str, model_registry_folder: str) -> None:
     features = pd.read_parquet(features_path)
-
     train_model(features, model_registry_folder)
 
 
@@ -17,12 +17,28 @@ def train_model(features: pd.DataFrame, model_registry_folder: str) -> None:
     target = 'Ba_avg'
     X = features.drop(columns=[target])
     y = features[target]
+
+    mlflow.set_experiment("airflow_training")
+
     with mlflow.start_run():
-        # insert autolog here ...
-        model = RandomForestRegressor(n_estimators=1, max_depth=10, n_jobs=1)
+        mlflow.sklearn.autolog()
+
+        model = RandomForestRegressor(
+            n_estimators=1,
+            max_depth=10,
+            n_jobs=1
+        )
         model.fit(X, y)
-    time_str = time.strftime('%Y%m%d-%H%M%S')
-    joblib.dump(model, os.path.join(model_registry_folder, time_str + '.joblib'))
+
+        timestamp = datetime.now().strftime('%Y%m%d-%H%M%S')
+        model_path = os.path.join(
+            model_registry_folder,
+            f"model_{timestamp}.joblib"
+        )
+
+        joblib.dump(model, model_path)
+
+        mlflow.log_param("model_path", model_path)
 
 
 def predict_with_io(features_path: str, model_path: str, predictions_folder: str) -> None:
