@@ -30,8 +30,8 @@ def train_model(features: pd.DataFrame, model_registry_folder: str) -> None:
         )
         model.fit(X, y)
 
-        mlflow.sklearn.log_model()
-
+        mlflow.sklearn.log_model(sk_model=model,artifact_path="model")
+        
         timestamp = datetime.now().strftime('%Y%m%d-%H%M%S')
         model_path = os.path.join(
             model_registry_folder,
