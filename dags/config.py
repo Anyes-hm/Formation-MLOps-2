@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta, datetime
 
 PROJECT_FOLDER = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -13,4 +14,6 @@ GENERATED_DATA_PATH = os.path.join(DATA_FOLDER, 'la-haute-borne-data-2017-2020.c
 FEATURES_PATH = os.path.join(DATA_FOLDER, 'prepared_features.parquet')
 
 MODEL_REGISTRY_FOLDER = os.path.join(PROJECT_FOLDER, 'models')
-MODEL_PATH = os.path.join(MODEL_REGISTRY_FOLDER, 'model.joblib')  # To change when needed
+
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+MODEL_PATH = os.path.join(MODEL_REGISTRY_FOLDER, '{timestamp}.joblib')  # To change when needed
