@@ -19,7 +19,8 @@ from formation_indus_ds_avancee.train_and_predict import predict_with_io
 def predict():
     @task
     def prepare_features_with_io_task():
-        features_path = os.path.join(DATA_FOLDER, f'prepared_features_{datetime.now()}.parquet')
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        features_path = os.path.join(DATA_FOLDER, f'prepared_features_{timestamp}.parquet')
         prepare_features_with_io(data_path=GENERATED_DATA_PATH,
                                  features_path=features_path,
                                  training_mode=False)
