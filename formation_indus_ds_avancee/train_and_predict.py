@@ -19,7 +19,7 @@ def train_model(features: pd.DataFrame, model_registry_folder: str) -> None:
     y = features[target]
     with mlflow.start_run():
         mlflow.sklearn.autolog(log_models=True)
-        model = ExtraTreesRegressor(n_estimators=200,max_depth=None,n_jobs=-1,random_state=42)
+        model = ExtraTreesRegressor(n_estimators=2,max_depth=None,n_jobs=-1,random_state=42)
         model.fit(X, y)
         time_str = time.strftime('%Y%m%d-%H%M%S')
         joblib.dump(model, os.path.join(model_registry_folder, time_str + '.joblib'))
