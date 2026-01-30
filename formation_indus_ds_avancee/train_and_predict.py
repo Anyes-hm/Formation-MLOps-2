@@ -17,12 +17,24 @@ def train_model(features: pd.DataFrame, model_registry_folder: str) -> None:
     target = 'Ba_avg'
     X = features.drop(columns=[target])
     y = features[target]
+    mlflow.set_experiment("airflow_training")
+
     with mlflow.start_run():
-        mlflow.sklearn.autolog(log_models=True)
+        mlflow.sklearn.autolog()
         model = ExtraTreesRegressor(n_estimators=2,max_depth=None,n_jobs=-1,random_state=42)
         model.fit(X, y)
-        time_str = time.strftime('%Y%m%d-%H%M%S')
-        joblib.dump(model, os.path.join(model_registry_folder, time_str + '.joblib'))
+
+        mlflow.sklearn.log_model(sk_model=model,artifact_path="model")
+        
+        timestamp = datetime.now().strftime('%Y%m%d-%H%M%S')
+        model_path = os.path.join(
+            model_registry_folder,
+            f"model_{timestamp}.joblib"
+        )
+
+        joblib.dump(model, model_path)
+
+        mlflow.log_param("model_path", model_path)
 
 
 def predict_with_io(features_path: str, model_path: str, predictions_folder: str) -> None:
