@@ -4,7 +4,7 @@ import time
 import joblib
 import mlflow
 import pandas as pd
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import ExtraTreesRegressor
 
 
 def train_model_with_io(features_path: str, model_registry_folder: str) -> None:
@@ -19,10 +19,10 @@ def train_model(features: pd.DataFrame, model_registry_folder: str) -> None:
     y = features[target]
     with mlflow.start_run():
         mlflow.sklearn.autolog(log_models=True)
-        model = RandomForestRegressor(n_estimators=1, max_depth=10, n_jobs=1)
+        model = ExtraTreesRegressor(n_estimators=200,max_depth=None,n_jobs=-1,random_state=42)
         model.fit(X, y)
-    time_str = time.strftime('%Y%m%d-%H%M%S')
-    joblib.dump(model, os.path.join(model_registry_folder, time_str + '.joblib'))
+        time_str = time.strftime('%Y%m%d-%H%M%S')
+        joblib.dump(model, os.path.join(model_registry_folder, time_str + '.joblib'))
 
 
 def predict_with_io(features_path: str, model_path: str, predictions_folder: str) -> None:
